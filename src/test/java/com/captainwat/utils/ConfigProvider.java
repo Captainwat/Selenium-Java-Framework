@@ -7,6 +7,15 @@ import java.util.Properties;
 public class ConfigProvider {
     private static Properties properties = new Properties();
 
+    public static String getUrl() {
+
+        String urlFromSystem = System.getProperty("url");
+        if (urlFromSystem != null) {
+            return urlFromSystem;
+        }
+        return properties.getProperty("url"); 
+    }
+
     static {
         try {
             // Вказуємо шлях до файлу
