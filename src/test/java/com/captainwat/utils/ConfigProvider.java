@@ -1,49 +1,102 @@
 package com.captainwat.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigProvider {
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     public static String getUrl() {
-
-        String urlFromSystem = System.getProperty("url");
-        if (urlFromSystem != null) {
-            return urlFromSystem;
-        }
-        return properties.getProperty("url"); 
+        return getBaseUrl();
     }
 
     static {
-        try {
-            // Вказуємо шлях до файлу
-            FileInputStream file = new FileInputStream("src/test/resources/config.properties");
-            properties.load(file);
+        boolean loaded = false;
+        try (InputStream resource = ConfigProvider.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (resource != null) {
+                properties.load(resource);
+                loaded = true;
+            }
         } catch (IOException e) {
-            System.err.println("Помилка: Не можу знайти файл config.properties!");
-            e.printStackTrace();
+            throw new IllegalStateException("Cannot read config.properties from classpath", e);
+        }
+
+        if (!loaded) {
+            try {
+                File file = new File("src/test/resources/config.properties");
+                if (file.exists()) {
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        properties.load(fis);
+                    }
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot read src/test/resources/config.properties", e);
+            }
         }
     }
 
-    // Метод, щоб дістати URL
     public static String getBaseUrl() {
-        return properties.getProperty("base.url");
+        return read(
+            new String[]{"base.url", "url"},
+            new String[]{"base.url", "url"},
+            new String[]{"BASE_URL", "URL"}
+        );
     }
 
-    // Метод, щоб дістати логін
     public static String getUsername() {
-        return properties.getProperty("username");
+        return read(
+            new String[]{"username"},
+            new String[]{"username"},
+            new String[]{"USERNAME"}
+        );
     }
 
-    // Метод, щоб дістати логін для заблокованого користувача
-    public static String getLockedUsername(){
-        return properties.getProperty("locked_username");
+    public static String getLockedUsername() {
+        return read(
+            new String[]{"locked_username"},
+            new String[]{"locked_username"},
+            new String[]{"LOCKED_USERNAME"}
+        );
     }
 
-    // Метод, щоб дістати пароль
     public static String getPassword() {
-        return properties.getProperty("password");
+        return read(
+            new String[]{"password"},
+            new String[]{"password"},
+            new String[]{"PASSWORD"}
+        );
+    }
+
+    private static String read(String[] systemKeys, String[] propertyKeys, String[] envKeys) {
+        for (String key : systemKeys) {
+            String value = trimToNull(System.getProperty(key));
+            if (value != null) {
+                return value;
+            }
+        }
+        for (String key : propertyKeys) {
+            String value = trimToNull(properties.getProperty(key));
+            if (value != null) {
+                return value;
+            }
+        }
+        for (String key : envKeys) {
+            String value = trimToNull(System.getenv(key));
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

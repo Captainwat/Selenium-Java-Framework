@@ -28,7 +28,13 @@ public class BaseTest {
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
         // 4. Відкриваємо сайт
-        driver.get(ConfigProvider.getBaseUrl());
+        String baseUrl = ConfigProvider.getBaseUrl();
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalStateException(
+                "base.url is not configured. Set src/test/resources/config.properties or pass -Dbase.url / BASE_URL"
+            );
+        }
+        driver.get(baseUrl);
     }
 
     @AfterMethod

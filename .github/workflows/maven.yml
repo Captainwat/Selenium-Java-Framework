@@ -27,4 +27,10 @@ jobs:
         uses: browser-actions/setup-chrome@latest
 
       - name: Run Tests
-        run: mvn clean test -Dheadless=true
+        run: >
+          mvn clean test
+          -Dheadless=true
+          -Dbase.url=https://www.saucedemo.com/
+          -Dusername=standard_user
+          -Dpassword=secret_sauce
+          -Dlocked_username=locked_out_user
