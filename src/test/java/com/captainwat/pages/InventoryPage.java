@@ -31,7 +31,7 @@ public class InventoryPage {
     public void addBackpackToCart(){
         driver.findElement(addToCartButton).click();
     }
-    @Step("Get URL for product")
+    @Step("Open product page by ID: {0}")
     public void getURLitem(String id){
         driver.get("https://www.saucedemo.com/inventory-item.html?id=" + id);
     }
