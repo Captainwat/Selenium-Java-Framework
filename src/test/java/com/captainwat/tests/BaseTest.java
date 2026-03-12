@@ -15,19 +15,16 @@ public class BaseTest {
 
     @BeforeMethod
     public void setUp() {
-        // 1. Качаємо драйвер (менеджер версій)
+    
         WebDriverManager.chromedriver().setup();
-
-        // 2. Створюємо браузер через твій DriverFactory!
-        // Вся магія з відключенням паролів тепер всередині цього методу.
         driver = DriverFactory.createChrome();
 
-        // 3. Загальні налаштування вікна та очікувань
+        
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
-        // 4. Відкриваємо сайт
+        
         String baseUrl = ConfigProvider.getBaseUrl();
         if (baseUrl == null || baseUrl.isBlank()) {
             throw new IllegalStateException(
