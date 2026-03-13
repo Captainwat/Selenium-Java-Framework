@@ -1,4 +1,4 @@
-package com.captainwat.API;
+package com.captainwat.api;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -47,6 +47,16 @@ public class BookingApiTest {
                     .extract().path("bookingid");
     }
 
+    private void deleteTestBooking(int bookingId) {
+        RestAssured
+                .given()
+                    .cookie("token", token)
+                .when()
+                    .delete("/booking/" + bookingId)
+                .then()
+                    .statusCode(201);
+    }
+
     @Test
     public void healthCheckTest() {
         RestAssured
@@ -70,65 +80,46 @@ public class BookingApiTest {
 
     @Test
     public void createBookingTest() {
-        int newBookingId = createTestBooking();
-        Assert.assertTrue(newBookingId > 0);
-
-        RestAssured
-                .given()
-                    .cookie("token", token)
-                .when()
-                    .delete("/booking/" + newBookingId)
-                .then()
-                    .statusCode(201);
-    }
+    int newBookingId = createTestBooking();
+    Assert.assertTrue(newBookingId > 0);
+    deleteTestBooking(newBookingId);
+}
 
     @Test
     public void updateBookingTest() {
-        int newBookingId = createTestBooking();
-        Booking myUpdatedData = BookingFactory.createUpdatedBooking();
+    int newBookingId = createTestBooking();
+    Booking myUpdatedData = BookingFactory.createUpdatedBooking();
 
-        RestAssured
-                .given()
-                    .cookie("token", token)
-                    .body(myUpdatedData)
-                .when()
-                    .put("/booking/" + newBookingId)
-                .then()
-                    .statusCode(200)
-                    .body("firstname", equalTo(myUpdatedData.firstname))
-                    .body("lastname", equalTo(myUpdatedData.lastname));
+    RestAssured
+            .given()
+                .cookie("token", token)
+                .body(myUpdatedData)
+            .when()
+                .put("/booking/" + newBookingId)
+            .then()
+                .statusCode(200)
+                .body("firstname", equalTo(myUpdatedData.firstname))
+                .body("lastname", equalTo(myUpdatedData.lastname));
 
-        RestAssured
-                .given()
-                    .cookie("token", token)
-                .when()
-                    .delete("/booking/" + newBookingId)
-                .then()
-                    .statusCode(201);
-    }
+    deleteTestBooking(newBookingId);
+}
 
     @Test
-    public void getOneBookingTest() {
-        int newBookingId = createTestBooking();
-        Booking myData = BookingFactory.createDefaultBooking();
+public void getOneBookingTest() {
+    int newBookingId = createTestBooking();
+    Booking myData = BookingFactory.createDefaultBooking();
 
-        RestAssured
-                .given()
-                .when()
-                    .get("/booking/" + newBookingId)
-                .then()
-                    .statusCode(200)
-                    .body("firstname", equalTo(myData.firstname))
-                    .body("lastname", equalTo(myData.lastname));
+    RestAssured
+            .given()
+            .when()
+                .get("/booking/" + newBookingId)
+            .then()
+                .statusCode(200)
+                .body("firstname", equalTo(myData.firstname))
+                .body("lastname", equalTo(myData.lastname));
 
-        RestAssured
-                .given()
-                    .cookie("token", token)
-                .when()
-                    .delete("/booking/" + newBookingId)
-                .then()
-                    .statusCode(201);
-    }
+    deleteTestBooking(newBookingId);
+}
 
     @Test
     public void getAuthTokenTest() {
@@ -148,15 +139,8 @@ public class BookingApiTest {
     }
 
     @Test
-    public void deleteBookingTest() {
-        int newBookingId = createTestBooking();
-
-        RestAssured
-                .given()
-                    .cookie("token", token)
-                .when()
-                    .delete("/booking/" + newBookingId)
-                .then()
-                    .statusCode(201);
-    }
+public void deleteBookingTest() {
+    int newBookingId = createTestBooking();
+    deleteTestBooking(newBookingId);
+}
 }

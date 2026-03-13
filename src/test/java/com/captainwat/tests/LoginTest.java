@@ -2,18 +2,11 @@ package com.captainwat.tests;
 
 import com.captainwat.pages.LoginPage;
 import com.captainwat.utils.ConfigProvider;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import com.captainwat.utils.ConfigProvider;
 
-import java.time.Duration;
+
 
 public class LoginTest extends BaseTest{
    
@@ -26,21 +19,21 @@ public class LoginTest extends BaseTest{
     }
 
     @Test
-    public void succsesfullLoginTest(){
+    public void successfulLoginTest(){
         loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
         String currentUrl = driver.getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("inventory"),"Login Unsucsesfull");
     }
 
     @Test
-    public void loginDeniedTest(){
+    public void loginWithInvalidCredentialsTest(){
         loginPage.login("standard_user", "wrong_password_123");
         String actualError = loginPage.getErrorMessage();
         String expectedError = "Epic sadface: Username and password do not match any user in this service";
         Assert.assertEquals(actualError, expectedError, "Access Denied");
     }
     @Test
-    public void loginLockedUser(){
+    public void loginWithLockedUserTest(){
         loginPage.login(ConfigProvider.getLockedUsername(), ConfigProvider.getPassword());
         String actualError = loginPage.getErrorMessage();
         String expectedError = "Epic sadface: Sorry, this user has been locked out.";

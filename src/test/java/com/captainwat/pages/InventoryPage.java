@@ -1,14 +1,14 @@
 package com.captainwat.pages;
 
 import io.qameta.allure.Step;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
+import com.captainwat.utils.ConfigProvider;
 
 
 public class InventoryPage {
@@ -32,15 +32,15 @@ public class InventoryPage {
         driver.findElement(addToCartButton).click();
     }
     @Step("Open product page by ID: {0}")
-    public void getURLitem(String id){
-        driver.get("https://www.saucedemo.com/inventory-item.html?id=" + id);
+    public void openItemById(String id){
+        driver.get(ConfigProvider.getBaseUrl() + "inventory-item.html?id=" + id);
     }
     @Step("Click on Cart icon")
     public void clickCartIcon(){
         driver.findElement(cartButton).click();
     }
     @Step("Click on the product name")
-    public void checkBackPackDetails(){
+    public void openBackpackDetails(){
         driver.findElement(itemBackpackButoon).click();
     }
     @Step("Check the item name")
@@ -59,11 +59,8 @@ public class InventoryPage {
         List<Double> prices = new ArrayList<>();
 
         for (WebElement element : priceElements) {
-            // Отримуємо текст "$29.99"
             String text = element.getText();
-            // Відрізаємо знак долара
             String cleanText = text.replace("$", "");
-            // Перетворюємо текст на число і додаємо в список
             prices.add(Double.parseDouble(cleanText));
         }
         return prices;

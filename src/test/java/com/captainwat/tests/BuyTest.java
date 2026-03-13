@@ -39,63 +39,62 @@ public void setup(){
 }
 
 @Test(dataProvider = "itemNames", dataProviderClass = TestDataProvider.class)
-public void checkItemNames(String id, String name){
+public void shouldDisplayCorrectItemNameById(String id, String name){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
-    inventoryPage.getURLitem(id);
+    inventoryPage.openItemById(id);
     Assert.assertEquals(inventoryPage.getItemDetail(),name,"Name details are different");
 }
 
 
 @Test
-public void orderBackpackTest(){
+public void shouldCompleteBackpackOrder(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.addBackpackToCart();
     inventoryPage.clickCartIcon();
     cartPage.clickCheckout();
     checkOutPage.fillForm("Test", "Testovich", "19000");
     overviewPage.clickFinishButton();
-    overviewPage.checkFinalMessage();
-    Assert.assertEquals(overviewPage.checkFinalMessage(), "Thank you for your order!");
+    Assert.assertEquals(overviewPage.getFinalMessage(), "Thank you for your order!");
 }
 
 @Test
-public void orderBackPackDeniedNoPostCode(){
+public void shouldShowErrorWhenPostalCodeIsMissing(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.addBackpackToCart();
     inventoryPage.clickCartIcon();
     cartPage.clickCheckout();
     checkOutPage.fillForm("test", "testovich", "");
-    Assert.assertEquals(checkOutPage.getTheErrorText(),"Error: Postal Code is required");
+    Assert.assertEquals(checkOutPage.getErrorText(),"Error: Postal Code is required");
 }
 @Test
-public void orderBackPackDeniesNoSurname(){
+public void shouldShowErrorWhenLastNameIsMissing(){
     loginPage.login(ConfigProvider.getUsername(),ConfigProvider.getPassword());
     inventoryPage.addBackpackToCart();
     inventoryPage.clickCartIcon();
     cartPage.clickCheckout();
     checkOutPage.fillForm("test", "", "1800");
-    Assert.assertEquals(checkOutPage.getTheErrorText(), "Error: Last Name is required");
+    Assert.assertEquals(checkOutPage.getErrorText(), "Error: Last Name is required");
 }
 
 @Test
-public void orderBackPackDeniesNoName(){
+public void shouldShowErrorWhenFirstNameIsMissing(){
     loginPage.login(ConfigProvider.getUsername(),ConfigProvider.getPassword());
     inventoryPage.addBackpackToCart();
     inventoryPage.clickCartIcon();
     cartPage.clickCheckout();
     checkOutPage.fillForm("", "test", "1800");
-    Assert.assertEquals(checkOutPage.getTheErrorText(), "Error: First Name is required");
+    Assert.assertEquals(checkOutPage.getErrorText(), "Error: First Name is required");
 }
 
 @Test
-public void clickProductDetail(){
+public void shouldOpenBackpackProductDetails(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
-    inventoryPage.checkBackPackDetails();
+    inventoryPage.openBackpackDetails();
     String currentUrl = driver.getCurrentUrl();
     Assert.assertTrue(currentUrl.contains("id=4"));
 }
 @Test
-public void checkPageFilteringByPricesLowToHigh(){
+public void shouldSortProductsByPriceLowToHigh(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.selectSortOption("Price (low to high)");
     List<Double> actualPrices = inventoryPage.getAllItemPrices();
@@ -105,7 +104,7 @@ public void checkPageFilteringByPricesLowToHigh(){
 }
 
 @Test
-public void checkPageFilteringByPricesHighToLow(){
+public void shouldSortProductsByPriceHighToLow(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.selectSortOption("Price (high to low)");
     List<Double> actualPrices = inventoryPage.getAllItemPrices();
@@ -116,7 +115,7 @@ public void checkPageFilteringByPricesHighToLow(){
 }
 
 @Test
-public void checkPageFilteringByNamesZtoA(){
+public void shouldSortProductsByNameZToA(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.selectSortOption("Name (Z to A)");
     List<String> actualOrder = inventoryPage.getAllProductNames();
@@ -128,7 +127,7 @@ public void checkPageFilteringByNamesZtoA(){
 }
 
 @Test
-public void checkPageFilteringByNameAtoZ(){
+public void shouldSortProductsByNameAToZ(){
     loginPage.login(ConfigProvider.getUsername(), ConfigProvider.getPassword());
     inventoryPage.selectSortOption("Name (A to Z)");
     List<String> actualOrder = inventoryPage.getAllProductNames();

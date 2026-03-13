@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OverviewPage {
     private WebDriver driver;
@@ -22,7 +21,7 @@ public class OverviewPage {
         driver.findElement(finishButton).click();
     }
 
-    public String checkFinalMessage(){
+    public String getFinalMessage(){
         String final_text = driver.findElement(pageHeader).getText();
         return final_text;
     }

@@ -1,4 +1,4 @@
-package com.captainwat.API;
+package com.captainwat.api;
 
 public class BookingFactory {
     public static Booking createDefaultBooking() {
